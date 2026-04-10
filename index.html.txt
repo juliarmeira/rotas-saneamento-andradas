@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotas de Inspeção - SES Andradas</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    
+    <style>
+        /* Estilos da Página e Interface */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: #0056b3; /* Cor institucional */
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            height: 60px;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .upload-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="file"] {
+            background: white;
+            color: #333;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        /* Ocupar o resto da tela com o mapa */
+        #map {
+            width: 100%;
+            height: calc(100vh - 60px);
+        }
+
+        /* Esconder o painel de texto de direções do Routing Machine */
+        .leaflet-routing-container {
+            display: none !important;
+        }
+
+        /* Estilo elegante para os Pop-ups do mapa */
+        .custom-popup {
+            max-width: 300px;
+        }
+        .custom-popup h4 {
+            margin: 0 0 5px 0;
+            color: #0056b3;
+            font-size: 1.1rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #ffc107;
+            color: #333;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .badge.institucional { background: #28a745; color: white; }
+        
+        .custom-popup p { margin: 5px 0; font-size: 0.9rem; }
+        .custom-popup ul { margin: 5px 0; padding-left: 20px; font-size: 0.85rem; }
+        .plano-acao {
+            margin-top: 10px;
+            padding: 8px;
+            background: #e9ecef;
+            border-left: 3px solid #0056b3;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Rotas de Inspeção Técnica - SES Andradas/MG</h1>
+        <div class="upload-container">
+            <label for="kmlFile"><strong>1º Passo: Carregue o KML aqui ➔</strong></label>
+            <input type="file" id="kmlFile" accept=".kml">
+        </div>
+    </header>
+
+    <main>
+        <div id="map"></div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // --- 1. BASE DE DADOS TÉCNICA ---
+        const dadosETEs = [
+            { id: "origem", nome: "Prefeitura Municipal de Andradas", tipo: "Ponto de Partida", status: "Institucional", capacidade: "-", pendencias: "Ponto de encontro e saída oficial para as vistorias técnicas.", diretrizPlano: "-" },
+            { id: "ete-sao-cristovao", nome: "ETE Jardim São Cristóvão (Sede)", tipo: "ETE Principal", status: "Operacional (Com patologias)", capacidade: "Qméd: 46,71 L/s | Qmáx: 61,68 L/s", pendencias: "<ul><li>Sistema desidratação subdimensionado.</li><li>Patologias estruturais severas.</li><li>Reforma leitos secagem.</li><li>Adequação NR-10/NR-12.</li></ul>", diretrizPlano: "AMPLIAÇÃO (CAPEX: R$ 5 Milhões)." },
+            { id: "ete-amelia", nome: "ETE Jardim Amélia", tipo: "ETE a desativar", status: "Inoperante (Em by-pass)", capacidade: "Qméd: 6,22 m³/h", pendencias: "<ul><li>Unidade parada e sofrendo vandalismo.</li><li>Falta de cercamento.</li><li>Bombas inoperantes.</li></ul>", diretrizPlano: "DESATIVAÇÃO. Substituição por Elevatória Compacta (EEEC)." },
+            { id: "ete-heloisa", nome: "ETE Jardim Heloísa", tipo: "ETE a desativar", status: "Operacional", capacidade: "Qméd: 3,55 L/s", pendencias: "<ul><li>Tanques PRFV com vulnerabilidade solar.</li><li>Sistema de cloração rudimentar.</li><li>Hidráulica inoperante.</li></ul>", diretrizPlano: "DESATIVAÇÃO. Substituição por Elevatória Compacta (EEEC)." },
+            { id: "ete-portal-mantiqueira", nome: "ETE Portal da Mantiqueira", tipo: "ETE a desativar", status: "Operacional (Demanda Revitalização)", capacidade: "2 aeradores (10 CV)", pendencias: "<ul><li>Dosagem de desinfetante não implantada.</li><li>Vazamentos nas estruturas.</li><li>Ausência de muros e alarme.</li></ul>", diretrizPlano: "DESATIVAÇÃO futura. Substituição por EEEC." },
+            { id: "ete-santo-antonio", nome: "ETE Santo Antônio de Lisboa", tipo: "ETE Completa", status: "Operacional", capacidade: "Qméd: 1,62 L/s | Qmáx: 2,91 L/s", pendencias: "<ul><li>Não possui tratamento de lodo local.</li><li>Vulnerabilidade UV nos tanques.</li></ul>", diretrizPlano: "Manutenção rigorosa e proteção UV." },
+            { id: "ete-bela-vista", nome: "ETE Alto da Bela Vista", tipo: "ETE a desativar", status: "Operacional (Risco Estrutural)", capacidade: "Qméd: 1,54 L/s", pendencias: "<ul><li>Risco Estrutural: Instabilidade vizinha.</li><li>Medição manual.</li><li>Vulnerabilidade UV.</li></ul>", diretrizPlano: "DESATIVAÇÃO futura. Conversão em EEEC." },
+            { id: "ete-recanto-serra", nome: "ETE Recanto da Serra", tipo: "ETE a desativar", status: "Operacional (Subutilizada)", capacidade: "Qméd projeto: 5.544 L/h", pendencias: "<ul><li>Operando abaixo da capacidade.</li><li>Vulnerabilidade solar em PRFV.</li></ul>", diretrizPlano: "DESATIVAÇÃO DEFINITIVA futura. Substituição por EEEC." }
+        ];
+
+        // --- 2. INICIALIZAR O MAPA ---
+        // Focado inicialmente na região central de Andradas
+        const map = L.map('map').setView([-22.0664, -46.5694], 13);
+        
+        // Adicionar o visual do mapa (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        let controleRota = null;
+
+        // --- 3. LÓGICA DE LEITURA DO ARQUIVO KML ---
+        document.getElementById('kmlFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const kmlText = event.target.result;
+                const parser = new DOMParser();
+                const kmlDoc = parser.parseFromString(kmlText, "text/xml");
+                
+                // Extrair as coordenadas dos pontos (Placemarks)
+                const placemarks = kmlDoc.getElementsByTagName("Placemark");
+                const waypoints = [];
+
+                for (let i = 0; i < placemarks.length; i++) {
+                    const coordString = placemarks[i].getElementsByTagName("coordinates")[0]?.textContent;
+                    if (coordString) {
+                        // KML salva como: longitude, latitude, altitude
+                        const coords = coordString.trim().split(',');
+                        const lng = parseFloat(coords[0]);
+                        const lat = parseFloat(coords[1]);
+                        waypoints.push(L.latLng(lat, lng));
+                    }
+                }
+
+                if (waypoints.length > 0) {
+                    tracarRota(waypoints);
+                } else {
+                    alert("Nenhuma coordenada válida encontrada no arquivo KML.");
+                }
+            };
+            
+            reader.readAsText(file);
+        });
+
+        // --- 4. TRAÇAR ROTA E CRIAR POPUPS ---
+        function tracarRota(waypoints) {
+            // Se já existir uma rota, remove a antiga antes de criar a nova
+            if (controleRota) {
+                map.removeControl(controleRota);
+            }
+
+            controleRota = L.Routing.control({
+                waypoints: waypoints,
+                routeWhileDragging: false,
+                addWaypoints: false,
+                fitSelectedRoutes: true,
+                show: false, // Esconde o painel nativo
+                createMarker: function(i, waypoint, n) {
+                    // Pega o dado técnico correspondente à ordem do ponto no KML
+                    // Se o KML tiver mais pontos que o nosso JSON, usa dados genéricos
+                    const dado = dadosETEs[i] || { 
+                        nome: `Ponto Desconhecido ${i+1}`, tipo: "A verificar", status: "-", capacidade: "-", 
+                        pendencias: "Ponto extra no arquivo KML sem dados correspondentes.", diretrizPlano: "-" 
+                    };
+
+                    // Define estilo da tag (Prefeitura fica verde, ETEs amarelo)
+                    const badgeClass = dado.id === "origem" ? "badge institucional" : "badge";
+
+                    // Monta o layout HTML de dentro da caixinha (Popup)
+                    const popupContent = `
+                        <div class="custom-popup">
+                            <h4>${dado.nome}</h4>
+                            <span class="${badgeClass}">${dado.tipo} | ${dado.status}</span>
+                            <p><strong>Capacidade:</strong> ${dado.capacidade}</p>
+                            <div class="pendencias">
+                                <strong>Pendências/Diagnóstico:</strong>
+                                ${dado.pendencias}
+                            </div>
+                            <div class="plano-acao">
+                                🚀 <strong>Plano Pós-Concessão:</strong><br>
+                                ${dado.diretrizPlano}
+                            </div>
+                        </div>
+                    `;
+
+                    // Retorna o marcador azul padrão do Leaflet com a nossa caixinha atrelada
+                    return L.marker(waypoint.latLng).bindPopup(popupContent);
+                }
+            }).addTo(map);
+        }
+    </script>
+</body>
+</html>
