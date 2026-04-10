@@ -13,9 +13,6 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     
-    <!-- Leaflet Routing Machine CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -23,34 +20,44 @@
 
     <header class="app-header">
         <div class="title-container">
-            <div class="app-logo">
-               <!-- Map Outline Icon -->
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-               </svg>
-            </div>
-            <h1 class="app-title">Rotas de Inspeção - SES Andradas</h1>
+            <h1>Sistema Operacional de Saneamento</h1>
+            <p>Roteamento Técnico e Diagnóstico de ETEs • Andradas/MG</p>
         </div>
         
+        <div class="route-controls">
+            <button class="route-btn active" onclick="setRouteFilter('all')" id="btn-route-all">Todos os Pontos</button>
+            <button class="route-btn" onclick="setRouteFilter('etes')" id="btn-route-etes">📍 Rota ETEs</button>
+            <button class="route-btn" onclick="setRouteFilter('rural')" id="btn-route-rural">🏘️ Rota Rural</button>
+        </div>
     </header>
 
     <main id="main-content">
         <div id="map"></div>
     </main>
-    
-    <!-- Loading Overlay -->
-    <div id="loader" class="loader-overlay" style="display: none;">
-        <div class="spinner"></div>
-        <p>A processar rota de inspeção...</p>
+
+    <!-- Dashboard de Rota -->
+    <div id="route-dashboard" class="route-dashboard hidden">
+        <h4 class="dashboard-title">Estimativa de Deslocamento</h4>
+        <div class="dashboard-stats">
+            <div class="stat-item">
+                <span class="stat-label">Distância Total</span>
+                <span id="route-distance" class="stat-value">-- km</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label" id="speed-label">Tempo Previsto (~35km/h)</span>
+                <span id="route-time" class="stat-value">-- min</span>
+            </div>
+        </div>
+        <div id="route-segments" class="route-segments"></div>
     </div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
-    <!-- Leaflet Routing Machine JS -->
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <!-- Dados de Rotas (Google Earth KML) -->
+    <script src="routes_data.js"></script>
     
-    <!-- Custom JS -->
+    <!-- Lógica Principal -->
     <script src="script.js"></script>
 </body>
 </html>
