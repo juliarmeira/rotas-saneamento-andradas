@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Boosters e EEAT.kmz</name>
+	<StyleMap id="m_ylw-pushpin">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="s_ylw-pushpin">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin_hl">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Folder>
+		<name>EEAT e Booster</name>
+		<Placemark>
+			<name>Booster Ypê</name>
+			<snippet></snippet>
+			<Camera>
+				<longitude>-46.58382882126502</longitude>
+				<latitude>-22.07794030021039</latitude>
+				<altitude>124.1202591137753</altitude>
+				<heading>5.352830054846114</heading>
+				<tilt>29.04094076600569</tilt>
+				<roll>1.361792349586915</roll>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</Camera>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-46.56576909304808,-22.07344994019074,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Booster Jd. Alvorada</name>
+			<snippet></snippet>
+			<Camera>
+				<longitude>-46.58382882126502</longitude>
+				<latitude>-22.07794030021039</latitude>
+				<altitude>124.1202591137753</altitude>
+				<heading>5.352830054846114</heading>
+				<tilt>29.04094076600569</tilt>
+				<roll>1.361792349586915</roll>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</Camera>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-46.58411195576881,-22.07742401436538,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Booster Rio Negro</name>
+			<snippet></snippet>
+			<Camera>
+				<longitude>-46.58382882126502</longitude>
+				<latitude>-22.07794030021039</latitude>
+				<altitude>124.1202591137753</altitude>
+				<heading>5.352830054846114</heading>
+				<tilt>29.04094076600569</tilt>
+				<roll>1.361792349586915</roll>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</Camera>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-46.58274431945294,-22.08566469746629,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>EEAT 03</name>
+			<snippet></snippet>
+			<Camera>
+				<longitude>-46.58382882126502</longitude>
+				<latitude>-22.07794030021039</latitude>
+				<altitude>124.1202591137753</altitude>
+				<heading>5.352830054846114</heading>
+				<tilt>29.04094076600569</tilt>
+				<roll>1.361792349586915</roll>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</Camera>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-46.55869470787187,-22.05821744175696,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>EEAT 01</name>
+			<snippet></snippet>
+			<Camera>
+				<longitude>-46.58382882126502</longitude>
+				<latitude>-22.07794030021039</latitude>
+				<altitude>124.1202591137753</altitude>
+				<heading>5.352830054846114</heading>
+				<tilt>29.04094076600569</tilt>
+				<roll>1.361792349586915</roll>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</Camera>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-46.57120258049267,-22.05627755815258,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>EEAT 02</name>
+			<snippet></snippet>
+			<Camera>
+				<longitude>-46.58382882126502</longitude>
+				<latitude>-22.07794030021039</latitude>
+				<altitude>124.1202591137753</altitude>
+				<heading>5.352830054846114</heading>
+				<tilt>29.04094076600569</tilt>
+				<roll>1.361792349586915</roll>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</Camera>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-46.57094259769055,-22.057040510444,0</coordinates>
+			</Point>
+		</Placemark>
+		<atom:link rel="app" href="https://www.google.com/earth/about/versions/#earth-pro" title="Google Earth Pro 7.3.7.1155"></atom:link>
+	</Folder>
+</Document>
+</kml>
