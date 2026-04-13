@@ -188,6 +188,11 @@ body {
     filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
 }
 
+.marker-eta {
+    color: #7dd3fc; /* Sky 300 / Info */
+    filter: drop-shadow(0 0 10px rgba(125, 211, 252, 0.6));
+}
+
 .popup-image {
     width: 100%;
     border-radius: 12px;
@@ -436,7 +441,9 @@ body {
 /* ==== ROUTE CONTROLS & DASHBOARD ==== */
 .route-controls {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
     background: rgba(15, 23, 42, 0.6);
     padding: 6px;
     border-radius: 14px;

@@ -47,6 +47,7 @@ function getMarkerIcon(data) {
     
     if (isOrigin) iconClass = 'origin-marker';
     else if (data.nome?.includes('ETE')) iconClass = 'marker-ete';
+    else if (data.id?.startsWith('eta')) iconClass = 'marker-eta';
     else if (data.nome?.match(/Aglomerado|Distrito/i)) iconClass = 'marker-distrito';
     else if (data.tipo?.includes('Água Bruta') || data.tipo?.includes('Abastecimento')) iconClass = 'marker-agua';
     else if (data.tipo?.includes('Distribuição') || data.tipo?.includes('Pressurização')) iconClass = 'marker-distribuicao';
@@ -132,8 +133,17 @@ function updateMarkers(filter) {
     markersLayer.clearLayers();
     let points = [...dadosETEs, ...dadosOutrosPontos, ...dadosEEATs];
     
-    if (filter === 'etes') points = dadosETEs.filter(d => d.id === 'origem' || d.nome.includes('ETE'));
-    else if (filter === 'rural') points = [...dadosETEs.filter(d => d.id === 'origem' || !d.nome.includes('ETE')), ...dadosOutrosPontos, ...dadosEEATs];
+    if (filter === 'etes') {
+        points = dadosETEs.filter(d => d.id === 'origem' || d.nome.includes('ETE'));
+    } else if (filter === 'boosters') {
+        points = [...dadosETEs.filter(d => d.id === 'origem'), ...dadosEEATs.filter(d => d.id.startsWith('booster'))];
+    } else if (filter === 'eeat') {
+        points = [...dadosETEs.filter(d => d.id === 'origem'), ...dadosEEATs.filter(d => d.id.startsWith('eeat'))];
+    } else if (filter === 'eta') {
+        points = [...dadosETEs.filter(d => d.id === 'origem' || d.id.startsWith('eta'))];
+    } else if (filter === 'rural') {
+        points = [...dadosETEs.filter(d => d.id === 'origem' || !d.nome.includes('ETE')), ...dadosOutrosPontos, ...dadosEEATs];
+    }
 
     points.forEach(data => {
         if (!data.lat || !data.lng) return;
