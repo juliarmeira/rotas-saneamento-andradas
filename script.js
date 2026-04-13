@@ -9,8 +9,8 @@
 // CONFIGURAÇÕES E ESTADOS
 // ============================================================
 const CONFIG = {
-    DEFAULT_CENTER: [-22.0664, -46.5684],
-    DEFAULT_ZOOM: 14,
+    DEFAULT_CENTER: [-22.071520, -46.573321],
+    DEFAULT_ZOOM: 15,
     SPEEDS: { all: 40, etes: 35, rural: 45 },
     ICON_PATHS: {
         pin: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
@@ -95,6 +95,37 @@ function setupMap() {
         attribution: '&copy; Google Maps', maxZoom: 20
     }).addTo(map);
     markersLayer = L.layerGroup().addTo(map);
+    
+    // Custom Locate Me Button
+    const LocateControl = L.Control.extend({
+        options: { position: 'bottomright' },
+        onAdd: function() {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control custom-locate-btn');
+            container.innerHTML = '🎯';
+            container.title = 'Minha Localização';
+            container.onclick = function() {
+                map.locate({ setView: true, maxZoom: 16 });
+            };
+            return container;
+        }
+    });
+    new LocateControl().addTo(map);
+    
+    map.on('locationfound', (e) => {
+        L.circle(e.latlng, e.accuracy).addTo(map);
+        L.marker(e.latlng).addTo(map).bindPopup("Você está aqui").openPopup();
+    });
+
+    map.on('locationerror', (e) => {
+        alert("Não foi possível obter sua localização: " + e.message);
+    });
+
+    // Dashboard Toggle Logic
+    const dashboard = document.getElementById('route-dashboard');
+    const toggle = document.getElementById('dashboard-toggle');
+    if (toggle && dashboard) {
+        toggle.onclick = () => dashboard.classList.toggle('expanded');
+    }
 }
 
 function updateMarkers(filter) {
@@ -120,9 +151,13 @@ function updateRoutes(filter) {
     routeLines = [];
 
     let routes = [];
-    if (filter === 'all') routes = [...(typeof rotasETEs !== 'undefined' ? rotasETEs : []), ...(typeof rotasRurais !== 'undefined' ? rotasRurais : [])];
-    else if (filter === 'etes') routes = typeof rotasETEs !== 'undefined' ? rotasETEs : [];
-    else if (filter === 'rural') routes = typeof rotasRurais !== 'undefined' ? rotasRurais : [];
+    if (filter === 'all') {
+        routes = []; // Hide all routes for 'All' view to keep it clean
+    } else if (filter === 'etes') {
+        routes = typeof rotasETEs !== 'undefined' ? rotasETEs : [];
+    } else if (filter === 'rural') {
+        routes = typeof rotasRurais !== 'undefined' ? rotasRurais : [];
+    }
 
     const dashboard = document.getElementById('route-dashboard');
     const segmentsList = document.getElementById('route-segments');
@@ -146,7 +181,8 @@ function updateRoutes(filter) {
         
         // Add click listener to the line itself
         line.on('click', () => {
-            map.fitBounds(line.getBounds(), { padding: [50, 50] });
+            const isMobile = window.innerWidth <= 768;
+            map.fitBounds(line.getBounds(), { padding: isMobile ? [20, 20] : [50, 50] });
             line.setStyle({ weight: 8, opacity: 1 });
             setTimeout(() => line.setStyle({ weight: 5, opacity: 0.85 }), 2000);
         });
@@ -180,9 +216,16 @@ function updateRoutes(filter) {
 window.focusSegment = (index) => {
     const line = routeLines[index];
     if (line) {
-        map.fitBounds(line.getBounds(), { padding: [60, 60] });
+        const isMobile = window.innerWidth <= 768;
+        map.fitBounds(line.getBounds(), { padding: isMobile ? [40, 40] : [60, 60] });
         line.setStyle({ weight: 10, opacity: 1 });
         setTimeout(() => line.setStyle({ weight: 5, opacity: 0.85 }), 1500);
+        
+        // Minimize dashboard on mobile after focus if not already expanded
+        const dashboard = document.getElementById('route-dashboard');
+        if (isMobile && dashboard && !dashboard.classList.contains('expanded')) {
+            // Keep it visible but potentially collapsed
+        }
     }
 };
 
@@ -192,7 +235,11 @@ function renderMap() {
     
     const allCoords = [...markerCoords, ...routeCoords];
     if (allCoords.length > 0) {
-        map.fitBounds(L.latLngBounds(allCoords), { padding: [50, 50] });
+        const isMobile = window.innerWidth <= 768;
+        map.fitBounds(L.latLngBounds(allCoords), { 
+            padding: isMobile ? [30, 30] : [50, 50],
+            paddingTopLeft: isMobile ? [0, 80] : [0, 0] // Account for header on mobile
+        });
     }
 }
 

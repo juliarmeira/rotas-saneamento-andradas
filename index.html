@@ -25,9 +25,15 @@
         </div>
         
         <div class="route-controls">
-            <button class="route-btn active" onclick="setRouteFilter('all')" id="btn-route-all">Todos os Pontos</button>
-            <button class="route-btn" onclick="setRouteFilter('etes')" id="btn-route-etes">📍 Rota ETEs</button>
-            <button class="route-btn" onclick="setRouteFilter('rural')" id="btn-route-rural">🏘️ Rota Rural</button>
+            <button class="route-btn active" onclick="setRouteFilter('all')" id="btn-route-all">
+                <span class="btn-icon">🗺️</span> <span class="btn-text">Todos os Pontos</span>
+            </button>
+            <button class="route-btn" onclick="setRouteFilter('etes')" id="btn-route-etes">
+                <span class="btn-icon">📍</span> <span class="btn-text">Rota ETEs</span>
+            </button>
+            <button class="route-btn" onclick="setRouteFilter('rural')" id="btn-route-rural">
+                <span class="btn-icon">🏘️</span> <span class="btn-text">Rota Rural</span>
+            </button>
         </div>
     </header>
 
@@ -37,6 +43,7 @@
 
     <!-- Dashboard de Rota -->
     <div id="route-dashboard" class="route-dashboard hidden">
+        <div class="dashboard-handle" id="dashboard-toggle"></div>
         <h4 class="dashboard-title">Estimativa de Deslocamento</h4>
         <div class="dashboard-stats">
             <div class="stat-item">
