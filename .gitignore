@@ -1,0 +1,8 @@
+node_modules/
+.agent/
+index.html.txt
+extracted_kml/
+*.kmz
+*.zip
+.DS_Store
+Thumbs.db

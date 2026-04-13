@@ -48,8 +48,8 @@ function getMarkerIcon(data) {
     if (isOrigin) iconClass = 'origin-marker';
     else if (data.nome?.includes('ETE')) iconClass = 'marker-ete';
     else if (data.nome?.match(/Aglomerado|Distrito/i)) iconClass = 'marker-distrito';
-    else if (data.tipo?.includes('Água Bruta')) iconClass = 'marker-agua';
-    else if (data.tipo?.includes('Distribuição')) iconClass = 'marker-distribuicao';
+    else if (data.tipo?.includes('Água Bruta') || data.tipo?.includes('Abastecimento')) iconClass = 'marker-agua';
+    else if (data.tipo?.includes('Distribuição') || data.tipo?.includes('Pressurização')) iconClass = 'marker-distribuicao';
 
     return L.divIcon({
         html: `<div class="custom-marker ${iconClass}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="${isOrigin ? CONFIG.ICON_PATHS.pin : CONFIG.ICON_PATHS.drop}"/></svg></div>`,
@@ -130,17 +130,21 @@ function setupMap() {
 
 function updateMarkers(filter) {
     markersLayer.clearLayers();
-    let points = [...dadosETEs, ...dadosOutrosPontos];
+    let points = [...dadosETEs, ...dadosOutrosPontos, ...dadosEEATs];
     
     if (filter === 'etes') points = dadosETEs.filter(d => d.id === 'origem' || d.nome.includes('ETE'));
-    else if (filter === 'rural') points = [...dadosETEs.filter(d => d.id === 'origem' || !d.nome.includes('ETE')), ...dadosOutrosPontos];
+    else if (filter === 'rural') points = [...dadosETEs.filter(d => d.id === 'origem' || !d.nome.includes('ETE')), ...dadosOutrosPontos, ...dadosEEATs];
 
     points.forEach(data => {
         if (!data.lat || !data.lng) return;
         L.marker([data.lat, data.lng], { icon: getMarkerIcon(data) })
             .addTo(markersLayer)
             .bindTooltip(data.nome, { permanent: true, direction: 'bottom', className: 'custom-tooltip', offset: [0, 10] })
-            .bindPopup(getPopupContent(data), { minWidth: 320, maxWidth: 360 });
+            .bindPopup(getPopupContent(data), { 
+                minWidth: window.innerWidth < 768 ? window.innerWidth * 0.8 : 320, 
+                maxWidth: 400,
+                className: 'responsive-popup'
+            });
     });
     
     return points.map(p => [p.lat, p.lng]);

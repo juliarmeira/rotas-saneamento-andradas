@@ -214,7 +214,7 @@ body {
 
 .leaflet-popup-content-wrapper {
     width: auto !important;
-    max-width: 90vw !important;
+    max-width: 95vw !important; /* Slightly more than 90% */
 }
 
 .leaflet-popup-content {
@@ -323,6 +323,26 @@ body {
 
 .pendencies-content p {
     color: #e2e8f0;
+}
+
+/* Table Styling for Popups */
+.popup-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.8rem;
+    color: #e2e8f0;
+}
+
+.popup-container th, .popup-container td {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px;
+    text-align: left;
+}
+
+.popup-container th {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
 }
 
 .highlight-section {
@@ -663,7 +683,8 @@ body {
     }
 
     .popup-container {
-        padding: 1rem;
+        padding: 1.25rem;
+        width: calc(100vw - 60px); /* Fill most of the screen width */
     }
 
     .popup-title {
